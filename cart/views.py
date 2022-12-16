@@ -5,20 +5,26 @@ from .cart import Cart
 from .forms import CartAddProductForm
 from coupons.forms import CouponApplyForm
 from shop.recommender import Recommender
+from django.contrib.auth.decorators import login_required
+from shop.views import user_login
 # Create your views here.
 
+# @login_required
 @require_POST
 def cart_add(request, product_id):
-    print("In cart dd.")
+    # print("here")
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     form = CartAddProductForm(request.POST)
-    if form.is_valid():
-        cd = form.cleaned_data
-        cart.add(product=product, quantity=cd['quantity'], override_quantity=cd['override'])
-    return redirect('cart:cart_detail')
+    if request.user.is_authenticated:
+        if form.is_valid():
+            cd = form.cleaned_data
+            cart.add(product=product, quantity=cd['quantity'], override_quantity=cd['override'])
+        return redirect('cart:cart_detail')
+    else:
+        return redirect('login')
 
-
+@login_required
 @require_POST
 def cart_remove(request, product_id):
     cart = Cart(request)
@@ -28,6 +34,7 @@ def cart_remove(request, product_id):
             return redirect('cart:cart_detail')
     return redirect('/')
 
+@login_required
 def cart_detail(request):
     cart = Cart(request)
   

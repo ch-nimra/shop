@@ -1,4 +1,5 @@
 {% extends "shop/base.html" %}
+{% load i18n %}
 
 {% load static %}
 
@@ -7,6 +8,25 @@
 {% endblock %}
 
 {% block content %}
+    <div id="subheader">
+        <div class="cart">
+            {% with total_items=cart|length %}
+                {% if total_items > 0 %}
+                    {% trans 'Your cart' %}:
+                    <a href="{% url 'cart:cart_detail' %}">
+                        {% blocktrans with total=cart.get_total_price count items=total_items %}
+                            {{ items }} item, Rs. {{ total }}
+                        {% plural %}
+                            {{ items }} items, Rs. {{ total }}
+                        {% endblocktrans %}                        
+                    </a>
+                {% else %}
+                    {%  trans 'Your cart is empty.' %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
     <div id="sidebar">
         <h3>Categories</h3>
         <ul>

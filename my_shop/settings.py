@@ -47,6 +47,11 @@ PARLER_LANGUAGES = {
 }
 
 
+LOGIN_REDIRECT_URL = 'login/'
+LOGIN_URL = 'login/'
+LOGOUT_URL = 'logout/'
+LOGOUT_REDIRECT_URL = 'login/'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -64,6 +69,7 @@ INSTALLED_APPS = [
     "parler",
     "django_extensions",
     "localflavor",
+
 ]
 
 MIDDLEWARE = [

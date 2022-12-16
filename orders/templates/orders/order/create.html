@@ -7,6 +7,26 @@
 {% endblock %}
 
 {% block content %}
+
+    <div id="subheader">
+        <div class="cart">
+            {% with total_items=cart|length %}
+                {% if total_items > 0 %}
+                    {% trans 'Your cart' %}:
+                    <a href="{% url 'cart:cart_detail' %}">
+                        {% blocktrans with total=cart.get_total_price count items=total_items %}
+                            {{ items }} item, Rs. {{ total }}
+                        {% plural %}
+                            {{ items }} items, Rs. {{ total }}
+                        {% endblocktrans %}                        
+                    </a>
+                {% else %}
+                    {%  trans 'Your cart is empty.' %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
     <h1>{% trans 'Checkout' %}</h1>
     <div class="order-info">
         <h3>{% trans "Your order" %}</h3>
@@ -17,16 +37,23 @@
                 <span>Rs. {{ item.total_price|floatformat:2 }}</span>
             </li>
             {% endfor %}
-            <!-- {% if cart.coupon %}
+            {% if cart.coupon %}
                 <li>
                     {% blocktrans with code=cart.coupon.code discount=cart.coupon.discount %}
                         "{{ code }}" ({{ discount }}% off)
                     {% endblocktrans %}
                     <span class="neg">- Rs. {{ cart.get_discount|floatformat:2 }}</span>
                 </li>
-            {% endif %} -->
+            {% endif %}
         </ul>
         <p>{% trans "Total" %}: Rs. {{ cart.get_total_price_after_discount|floatformat:2 }}</p>
+        
+        <form action='actionUrl' method='GET'>
+            <button type="button" id="sort-btn">View details</button>
+        </form>
+
+        
+        
     </div>
     <form method="post" class="order-form">
         {{ form.as_p }}

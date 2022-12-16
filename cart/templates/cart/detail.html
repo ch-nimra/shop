@@ -8,6 +8,26 @@
 {% endblock %}
 
 {% block content %}
+
+    <div id="subheader">
+        <div class="cart">
+            {% with total_items=cart|length %}
+                {% if total_items > 0 %}
+                    {% trans 'Your cart' %}:
+                    <a href="{% url 'cart:cart_detail' %}">
+                        {% blocktrans with total=cart.get_total_price count items=total_items %}
+                            {{ items }} item, Rs. {{ total }}
+                        {% plural %}
+                            {{ items }} items, Rs. {{ total }}
+                        {% endblocktrans %}                        
+                    </a>
+                {% else %}
+                    {%  trans 'Your cart is empty.' %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
     <h1>Your shopping cart</h1>
     <table class="cart">
         <thead>
@@ -17,7 +37,7 @@
                 <th>Quantity</th>
                 <th>Remove</th>
                 <th>Unit price</th>
-                <th>Price</th>
+                <th>Total Price</th>
             </tr>
         </thead>
         <tbody>
@@ -31,31 +51,38 @@
                     </a>
                 </td>
                 <td>{{ product.name }}</td>
-                <td>
-                    <form action="{% url 'cart:cart_add' product.id %}" method="post">
-                        {{ item.update_quantity_form.quantity }}
-                        {{ item.update_quantity_form.override }}
-                        <input type="submit" value="Update">
-                        {% csrf_token %}
-                    </form>
-                   </td>
+                <td  id=" qty">
+                    <!-- {{ item.update_quantity_form.quantity }} -->
+                    <input type="button" name="subtract"  class= "subtract" id="subtract" value="-"></input>
+                    <input type="button" name="add" class="add" id="add" value="+"></input>
+                    <input type="text" name="qty"  class="qty" id="qty" value="0"></input>
+                    
+       
+                </td>
                 <td>
                     <form action="{% url 'cart:cart_remove' product.id %}" method="post">
                         <input type="submit" value="Remove">
                         {% csrf_token %}
                     </form>
                 </td>
-                <td class="num">Rs. {{ item.price }}</td>
-                <td class="num">Rs. {{ item.total_price }}</td>
+                
+                <td class="num price" id="price">{{ item.price }}
+                  
+
+                </td>
+                <td class="num total" id="total">{{ item.total_price }}</td>
             </tr>
             {% endwith %}
             {% endfor %}
 
+
+
+
             {% if cart.coupon %}
-                <tr class="subtotal">
-                    <td>Subtotal</td>
+                <tr class="subtotal" id="total">
+                    <td id="total">Subtotal</td>
                     <td colspan="4"></td>
-                    <td class="num">Rs. {{ cart.get_total_price|floatformat:2 }}</td>
+                    <td class="num" id="total">{{ cart.get_total_price|floatformat:2 }}</td>
                 </tr>
                 <tr>
                     <td>
@@ -64,16 +91,16 @@
                     ({{ cart.coupon.discount }}% off)
                     </td>
                 <td colspan="4"></td>
-                <td class="num neg">
-                    - Rs.{{ cart.get_discount|floatformat:2 }}
+                rs.<td class="num neg">
+                    - {{ cart.get_discount|floatformat:2 }}
                 </td>
                 </tr>
             {% endif %}
 
-                <tr class="total">
+                <tr class="final-total" id="total">
                     <td>Total</td>
                     <td colspan="4"></td>
-                    <td class="num">
+                    <td class="final-num" id="final-num">
                     Rs.{{ cart.get_total_price_after_discount|floatformat:2 }}
                     </td>
                 </tr>
@@ -106,4 +133,7 @@
             <a href="{% url 'shop:product_list' %}" class="button light">Continue shopping</a>
             <a href="{% url 'orders:order_create' %}" class="button">Checkout</a>
         </p>
-   {% endblock %}
+
+
+  
+{% endblock %}

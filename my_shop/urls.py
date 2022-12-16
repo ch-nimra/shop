@@ -19,15 +19,21 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.utils.translation import gettext_lazy as _
+from shop.views import user_login,product_list, user_logout
+from django.contrib.auth import views as auth_views
 
 urlpatterns = i18n_patterns(
     path(_('admin/'), admin.site.urls),
+    path('', product_list, name='product_list'),
+    path('login/',user_login, name='login'),
+    path('logout/',user_logout, name='logout'),
+    # path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path(_('cart/'), include('cart.urls', namespace='cart')),
     path(_('orders/'), include('orders.urls', namespace='orders')),
     path(_('payment/'),include('payment.urls',namespace='payment')),
     path(_('coupons/'), include('coupons.urls', namespace='coupons')),
     path('rosetta/', include('rosetta.urls')),
-    path('', include('shop.urls', namespace='shop')),
+    path('shop/', include('shop.urls', namespace='shop')),
    
 )
 

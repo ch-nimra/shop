@@ -4,13 +4,13 @@
 Order{{order.id}}{{block.super}}
 {% endblock %}
 
-{% block breadcrumbs %}
+<!-- {% block breadcrumbs %}
     <div class="breadcrumbs">
         <a href="{% url 'admin:index' %}">Home</a>&rsaquo;
         <a href="{% url 'admin:orders_order_changelist' %}">Orders</a>&rsaquo;
         <a href="{% url 'admin:orders_order_change' %}">Order</a>&rsaquo; Detail
     </div>
-{%  endblock %}
+{%  endblock %} -->
 
 {% block content %}
     <h1>Order{{order.id}}</h1>

@@ -11,8 +11,14 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 import weasyprint
-
+from .admin import order_detail
 # Create your views here.
+
+def sort_btn(request):
+    if request.GET.get('sort-btn'):
+        return render(request, 'orders:admin-order_pdf', args=[obj.id])
+        # url = reverse('orders:admin_order_pdf', args=[obj.id])
+        # return mark_safe(f'<a href="{url}">PDF</a>')
 
 def order_create(request):
     cart = Cart(request)
@@ -55,3 +61,4 @@ def admin_order_pdf(request, order_id):
         stylesheets=[weasyprint.CSS(
         settings.STATIC_ROOT + 'css/base.css')])
     return response
+

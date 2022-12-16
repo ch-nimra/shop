@@ -8,10 +8,20 @@
         <meta charset="utf-8" />
         <title>{% block title %}{% trans 'My shop' %}{% endblock %}</title>
         <link href="{% static 'css/base.css' %}" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     </head>
     <body>
         <div id="header">
             <a href="/" class="logo">{% trans 'MY SHOP' %}</a>
+
+            <span class="user">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Log-in</a>
+                {% endif %}
+            </span>
+            
             {% get_current_language as LANGUAGE_CODE %}
             {% get_available_languages as LANGUAGES %}
             {% get_language_info_list for LANGUAGES as languages %}
@@ -28,28 +38,13 @@
                     {% endfor %}
                 </ul>
             </div>
-        </div>
-        <div id="subheader">
-            <div class="cart">
-                {% with total_items=cart|length %}
-                    {% if total_items > 0 %}
-                        {% trans 'Your cart' %}:
-                        <a href="{% url 'cart:cart_detail' %}">
-                            {% blocktrans with total=cart.get_total_price count items=total_items %}
-                                {{ items }} item, Rs. {{ total }}
-                            {% plural %}
-                                {{ items }} items, Rs. {{ total }}
-                            {% endblocktrans %}                        
-                        </a>
-                    {% else %}
-                        {%  trans 'Your cart is empty.' %}
-                    {% endif %}
-                {% endwith %}
+                
             </div>
-        </div>
+  
         <div id="content">
             {% block content %}
             {% endblock %}
         </div>
+
     </body>
 </html>
