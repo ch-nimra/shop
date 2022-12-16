@@ -134,6 +134,53 @@
             <a href="{% url 'orders:order_create' %}" class="button">Checkout</a>
         </p>
 
-
+    <script>
+            $(function() {
+                function calcuate_total(){
+                var total_sum = 0
+                $('.total').each(function(){
+                    total_sum += parseFloat($(this).text())
+                })
+                return total_sum
+            } 
+          var price = parseFloat($('.price').text());
+        
+          $('.subtract').on("click",function() {
+            tr =$(this).closest('tr');
+            price = parseFloat($(tr).find('.price').text())
+            $qty = $(tr).find('.qty');
+            var current = parseInt($qty.val());
+            if ( current > 0 ) {
+                $qty.val(current-1) 
+                $(tr).find('.total').text(price*parseInt($qty.val()));
+            } else {
+                $(tr).find('.total').text(0);
+            }
+            var get_total_after_subtract = calcuate_total()
+            $("#final-num").html("Rs."+get_total_after_subtract)
+        
+          });
+        
+          $('.add').on("click",function() {
+            tr = $(this).closest('tr');
+            price = parseFloat($(tr).find('.price').text());
+            $qty = $(tr).find('.qty');
+            var current = parseInt($qty.val());
+            $qty.val(current+1);
+            $(tr).find('.total').text(price*parseInt($qty.val()))
+            var get_total_after_add = calcuate_total()
+            $("#final-num").html("Rs."+get_total_after_add)
+            
+            // console.log("working")
+            // var $qty = $('.qty');
+            // var current = parseInt($qty.val());
+            // $qty.val(current+1);
+            // parseFloat($('.total').text(price*(current+1)));
+          });
+        });    
+        
+        
+    </script>
+        
   
 {% endblock %}
