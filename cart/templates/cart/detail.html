@@ -145,20 +145,7 @@
                 return total_sum
             } 
           var price = parseFloat($('.price').text());
-          
-          {% comment %} function deleteitem(del_id){
-                $.ajax({
-                    type:'POST',
-                    url = '{% url "cart:cart_remove" %}'
-                    data={
-                        'del_id': del_id,
-                    }
-                    success: function(response){
-                        console.log(response)
-                    }
-                })
-          }  {% endcomment %}
-        
+
           $('.subtract').on("click",function() {
             tr =$(this).closest('tr');
             price = parseFloat($(tr).find('.price').text())
@@ -185,21 +172,40 @@
             var get_total_after_add = calcuate_total()
             $("#final-num").html("Rs."+get_total_after_add)
             
-            // console.log("working")
-            // var $qty = $('.qty');
-            // var current = parseInt($qty.val());
-            // $qty.val(current+1);
-            // parseFloat($('.total').text(price*(current+1)));
           });
 
+          // removing item from cart
+          $('.remove').click(function(){
+               let del_id = $(this).attr('data-product-id');
 
-          {% comment %} $('.remove').click(function(){
-               var del_id = $(this).attr('data-product-id');
-               console.log(del_id);
-               deleteitem(del_id)
+               let quantity_col = $(this).parent().siblings()[2]
+
+               // Get the quantity of the particular row.
+
+               // Get the total price of the particular row.
+               deleteitem(del_id, this);
           })
-        });    
-         {% endcomment %}
+        });  
+        
+                
+          function deleteitem(del_id, _this){
+                $.ajax({
+                    type:'POST',
+                    url : '{% url "cart:cart_remove" %}',
+                    data : {
+                        'del_id': del_id,
+                        'csrfmiddlewaretoken': '{{csrf_token}}'
+                    },
+                    success:function(response){
+                        if(response.status === 204){
+                            
+                            $(_this).parent().parent().remove(); // Dom maniplation
+                        }
+                    }
+                })
+          }  
+         
+         
         
     </script>
         

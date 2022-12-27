@@ -29,15 +29,19 @@
 
     <div id="sidebar">
 
-        <form action="{% url 'shop:product_list' %}" method="get">
+        {% comment %} <form action="{% url 'shop:product_list' %}" method="get">
             <input name="q" type="text" placeholder="filter by...">
             <button type='submit'>Filter</button>
-        </form>
+        </form> {% endcomment %}
 
         <form action="{% url 'shop:product_list' %}" method="get">
             <input name="q" type="text" placeholder="Search...">
             <button type='submit'>Search</button>
         </form> 
+
+        <br>
+    
+        
 
         <h3>Categories</h3>
         <ul>
@@ -50,6 +54,15 @@
                 </li>
             {% endfor %}
         </ul>
+        <br>
+
+        <h3>Price</h3>
+        <li>
+            <input type='range'  id="rangeInput" min='0' max='1000' oninput='MaxPrice.value=this.value'>
+        </li>
+        <li>
+            Max:<input type='number' onkeyup='rangeInput.value=this.value' id='MaxPrice' min='0' max='1000'>
+        </li>
     </div>
     <div id="main" class="product-list">
         <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
@@ -91,3 +104,4 @@
         </ul>
       </nav>
 {% endblock %}
+

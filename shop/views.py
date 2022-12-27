@@ -54,7 +54,9 @@ class ProductListView(View):
 
         paginator = Paginator(products,3)
         page_number = request.GET.get('page')
-        ProductDataFinal = paginator.get_page(page_number)
+        product_data_final = paginator.get_page(page_number)
+
+        
         
 
         if category_slug:   
@@ -68,15 +70,12 @@ class ProductListView(View):
 
         search_param = request.GET.get('q',None)
         if search_param:
-            products = products.filter(translations__name__icontains=search_param)
-            print(products)
-
-            
+            product_data_final = products.filter(translations__name__icontains=search_param)
         
         return render(request, 'shop/product/list.html', {'category': category,
                                                             'categories': categories,
-                                                            'products': products,
-                                                            'product_data': ProductDataFinal})
+                                                            # 'products': products,
+                                                            'product_data': product_data_final})
 
 class ProductDetailView(View):
     def get(self, request, id, slug):
@@ -108,19 +107,3 @@ class ProductDetailView(View):
 
 
 
-# class SearchResultsView(View):
-#         model = Product
-#         template_name = "search_results.html"
-
-# def post_search(request):
-#     form = SearchForm()
-#     query = None
-#     results = []
-#     if 'query' in request.GET:
-#         form = SearchForm(request.GET)
-#         if form.is_valid():
-#             query = form.cleaned_data['query']
-#             results = Product.objects.annotate( search=SearchVector('name')).filter(search=query)
-#     return render(request, 'shop/product/searchresults.html', {'form': form,
-#                                                                 'query': query,
-#                                                                 'results':results})

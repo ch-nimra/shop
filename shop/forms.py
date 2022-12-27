@@ -6,3 +6,6 @@ class LoginForm(forms.Form):
 
 class SearchForm(forms.Form):
     query = forms.CharField()
+
+
+    
