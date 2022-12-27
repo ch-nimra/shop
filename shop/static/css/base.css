@@ -334,3 +334,8 @@ form div.field {
     color: #000;
     text-decoration: none;
 }
+
+#abcimage {
+    height: 200px;
+    width: 200px;
+}

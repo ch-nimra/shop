@@ -28,6 +28,17 @@
     </div>
 
     <div id="sidebar">
+
+        <form action="{% url 'shop:product_list' %}" method="get">
+            <input name="q" type="text" placeholder="filter by...">
+            <button type='submit'>Filter</button>
+        </form>
+
+        <form action="{% url 'shop:product_list' %}" method="get">
+            <input name="q" type="text" placeholder="Search...">
+            <button type='submit'>Search</button>
+        </form> 
+
         <h3>Categories</h3>
         <ul>
             <li {% if not category %}class="selected"{% endif %}>
@@ -42,16 +53,41 @@
     </div>
     <div id="main" class="product-list">
         <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
-        {% for product in products %}
+        {% for product in product_data %}
             <div class="item">
                 <a href="{{ product.get_absolute_url }}">
-                    <img  class ='abcimage' src="{% if product.image %}{{ product.image.url }}
-                    {%else %}{% static 'img/no_image.png' %}{% endif %}">
+                    <img  id ='abcimage' src="{% if product.image %}{{ product.image.url }}
+                    {% else %}{% static 'img/no_image.png' %}{% endif %}">
                 </a>
-                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                <br>
+                <a href="{{product.get_absolute_url}}">{{ product.name }}</a>
                 <br>
                 Rs.{{ product.price }}
+                {% comment %} <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                    {{ cart_product_form }}
+                    {% csrf_token %}
+                    <input type="submit" value="{% trans 'Buy Now' %}">
+                </form> {% endcomment %}
             </div>
         {% endfor %}
     </div>
+
+    <nav aria-label="...">
+        <ul class="pagination">
+          {%  if product_data.has_previous %}
+          <li class="page-item ">
+            <a class="page-link" href="/shop/?page=1" tabindex="-1">First</a>
+          </li>
+          <li class="page-item ">
+            <a class="page-link" href="/shop/?page={{ product_data.previous_page_number }}" tabindex="-1">Previous</a>
+          </li>
+          {% endif %}              
+      
+          {% if product_data.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="/shop/?page={{ product_data.next_page_number }}">Next</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
 {% endblock %}

@@ -55,15 +55,16 @@
                     <!-- {{ item.update_quantity_form.quantity }} -->
                     <input type="button" name="subtract"  class= "subtract" id="subtract" value="-"></input>
                     <input type="button" name="add" class="add" id="add" value="+"></input>
-                    <input type="text" name="qty"  class="qty" id="qty" value="0"></input>
+                    <input type="text" name="qty"  class="qty" id="qty" value="{{item.quantity}}"></input>
                     
        
                 </td>
                 <td>
-                    <form action="{% url 'cart:cart_remove' product.id %}" method="post">
-                        <input type="submit" value="Remove">
+                    {% comment %} <form action="{% url 'cart:cart_remove' product.id %}" method="post">
+                        <input type="submit" class="remove" value="Remove">
                         {% csrf_token %}
-                    </form>
+                    </form> {% endcomment %}
+                    <input type="submit" class="remove" value="remove" data-product-id= '{{product.id}}'> 
                 </td>
                 
                 <td class="num price" id="price">{{ item.price }}
@@ -144,6 +145,19 @@
                 return total_sum
             } 
           var price = parseFloat($('.price').text());
+          
+          {% comment %} function deleteitem(del_id){
+                $.ajax({
+                    type:'POST',
+                    url = '{% url "cart:cart_remove" %}'
+                    data={
+                        'del_id': del_id,
+                    }
+                    success: function(response){
+                        console.log(response)
+                    }
+                })
+          }  {% endcomment %}
         
           $('.subtract').on("click",function() {
             tr =$(this).closest('tr');
@@ -177,8 +191,15 @@
             // $qty.val(current+1);
             // parseFloat($('.total').text(price*(current+1)));
           });
+
+
+          {% comment %} $('.remove').click(function(){
+               var del_id = $(this).attr('data-product-id');
+               console.log(del_id);
+               deleteitem(del_id)
+          })
         });    
-        
+         {% endcomment %}
         
     </script>
         
