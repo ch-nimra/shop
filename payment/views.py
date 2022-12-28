@@ -3,6 +3,8 @@ import braintree
 from django.conf import settings
 from orders.models import Order
 from .tasks import payment_completed
+from django.views import View
+
 
 # Create your views here.
 
@@ -42,10 +44,12 @@ def payment_process(request):
         # client_token = gateway.client_token.generate()
         return render(request, 'payment/paid.html', {'order': order})
 
-def payment_done(request):
 
-    return render(request, 'payment/done.html')
- 
-def payment_canceled(request):
+class PaymentDoneView(View):
+    def get(self, request):
+        return render(request, 'payment/done.html')
 
-    return render(request, 'payment/canceled.html')
+class PaymentCancelledView(View):
+
+    def get(self, request):
+        return render(request, 'payment/canceled.html')

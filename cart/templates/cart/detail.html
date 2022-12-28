@@ -55,15 +55,16 @@
                     <!-- {{ item.update_quantity_form.quantity }} -->
                     <input type="button" name="subtract"  class= "subtract" id="subtract" value="-"></input>
                     <input type="button" name="add" class="add" id="add" value="+"></input>
-                    <input type="text" name="qty"  class="qty" id="qty" value="0"></input>
+                    <input type="text" name="qty"  class="qty" id="qty" value="{{item.quantity}}"></input>
                     
        
                 </td>
                 <td>
-                    <form action="{% url 'cart:cart_remove' product.id %}" method="post">
-                        <input type="submit" value="Remove">
+                    {% comment %} <form action="{% url 'cart:cart_remove' product.id %}" method="post">
+                        <input type="submit" class="remove" value="Remove">
                         {% csrf_token %}
-                    </form>
+                    </form> {% endcomment %}
+                    <input type="submit" class="remove" value="remove" data-product-id= '{{product.id}}'> 
                 </td>
                 
                 <td class="num price" id="price">{{ item.price }}
@@ -134,6 +135,79 @@
             <a href="{% url 'orders:order_create' %}" class="button">Checkout</a>
         </p>
 
+    <script>
+            $(function() {
+                function calcuate_total(){
+                var total_sum = 0
+                $('.total').each(function(){
+                    total_sum += parseFloat($(this).text())
+                })
+                return total_sum
+            } 
+          var price = parseFloat($('.price').text());
 
+          $('.subtract').on("click",function() {
+            tr =$(this).closest('tr');
+            price = parseFloat($(tr).find('.price').text())
+            $qty = $(tr).find('.qty');
+            var current = parseInt($qty.val());
+            if ( current > 0 ) {
+                $qty.val(current-1) 
+                $(tr).find('.total').text(price*parseInt($qty.val()));
+            } else {
+                $(tr).find('.total').text(0);
+            }
+            var get_total_after_subtract = calcuate_total()
+            $("#final-num").html("Rs."+get_total_after_subtract)
+        
+          });
+        
+          $('.add').on("click",function() {
+            tr = $(this).closest('tr');
+            price = parseFloat($(tr).find('.price').text());
+            $qty = $(tr).find('.qty');
+            var current = parseInt($qty.val());
+            $qty.val(current+1);
+            $(tr).find('.total').text(price*parseInt($qty.val()))
+            var get_total_after_add = calcuate_total()
+            $("#final-num").html("Rs."+get_total_after_add)
+            
+          });
+
+          // removing item from cart
+          $('.remove').click(function(){
+               let del_id = $(this).attr('data-product-id');
+
+               let quantity_col = $(this).parent().siblings()[2]
+
+               // Get the quantity of the particular row.
+
+               // Get the total price of the particular row.
+               deleteitem(del_id, this);
+          })
+        });  
+        
+                
+          function deleteitem(del_id, _this){
+                $.ajax({
+                    type:'POST',
+                    url : '{% url "cart:cart_remove" %}',
+                    data : {
+                        'del_id': del_id,
+                        'csrfmiddlewaretoken': '{{csrf_token}}'
+                    },
+                    success:function(response){
+                        if(response.status === 204){
+                            
+                            $(_this).parent().parent().remove(); // Dom maniplation
+                        }
+                    }
+                })
+          }  
+         
+         
+        
+    </script>
+        
   
 {% endblock %}

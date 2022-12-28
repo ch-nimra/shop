@@ -47,21 +47,23 @@ PARLER_LANGUAGES = {
 }
 
 
-LOGIN_REDIRECT_URL = 'login/'
-LOGIN_URL = 'login/'
+LOGIN_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'
 LOGOUT_URL = 'logout/'
-LOGOUT_REDIRECT_URL = 'login/'
+LOGOUT_REDIRECT_URL = 'login'
 
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "shop","cart",
+    "shop",
+    "cart",
     "orders",
     "payment",
     "coupons",
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
     "parler",
     "django_extensions",
     "localflavor",
+    # "admin",
 
 ]
 
@@ -177,3 +180,12 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+#JAZZMIN SETTINGS
+JAZZMIN_SETTINGS = {
+
+      "site_title": "Library Admin",
+     # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_header": "Admin Site",
+}
