@@ -42,7 +42,7 @@ weasyprint==57.1
 webencodings==0.5.1
 zopfli==0.2.2
 django-jazzmin==2.6.0
-djnago-rosetta==0.9.8
+django-rosetta==0.9.8
 polib==1.1.1
 numpy==1.24.1 
 scipy==1.9.3
