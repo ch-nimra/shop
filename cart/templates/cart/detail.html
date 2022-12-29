@@ -4,7 +4,7 @@
 {% load static %}
 
 {% block title %}
- Your shopping cart
+ My shopping cart
 {% endblock %}
 
 {% block content %}
@@ -16,9 +16,9 @@
                     {% trans 'Your cart' %}:
                     <a href="{% url 'cart:cart_detail' %}">
                         {% blocktrans with total=cart.get_total_price count items=total_items %}
-                            {{ items }} item, Rs. {{ total }}
+                            {{ items }} item, Rs.{{ total }}
                         {% plural %}
-                            {{ items }} items, Rs. {{ total }}
+                        <span id="total-item-cart">{{ items }}</span> items, Rs. <span id="total-price-cart">{{ total }}</span>
                         {% endblocktrans %}                        
                     </a>
                 {% else %}
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <h1>Your shopping cart</h1>
+    <h1>My shopping cart</h1>
     <table class="cart">
         <thead>
             <tr>
@@ -138,52 +138,89 @@
     <script>
             $(function() {
                 function calcuate_total(){
-                var total_sum = 0
-                $('.total').each(function(){
-                    total_sum += parseFloat($(this).text())
-                })
-                return total_sum
-            } 
-          var price = parseFloat($('.price').text());
+                    var total_sum = 0
+                    $('.total').each(function(){
+                        
+                        total_sum += parseFloat($(this).text())
+                    
+                    })
+                    $("#final-num").html("Rs."+total_sum)
+                    $("#total-price-cart")[0].innerText = total_sum
+                } 
 
-          $('.subtract').on("click",function() {
-            tr =$(this).closest('tr');
-            price = parseFloat($(tr).find('.price').text())
-            $qty = $(tr).find('.qty');
-            var current = parseInt($qty.val());
-            if ( current > 0 ) {
-                $qty.val(current-1) 
-                $(tr).find('.total').text(price*parseInt($qty.val()));
-            } else {
-                $(tr).find('.total').text(0);
-            }
-            var get_total_after_subtract = calcuate_total()
-            $("#final-num").html("Rs."+get_total_after_subtract)
+                function calculateFinalItem(){
+                    var total_item = 0
+                    $.each($('.qty'),function(key, value){
+
+                        total_item += parseInt($(this).val())                      
+                      })
+                      $('#total-item-cart')[0].innerText= total_item
+                }
+
+                    var price = parseFloat($('.price').text());
+
+                    $('.subtract').on("click",function() {
+                        tr =$(this).closest('tr');
+                        price = parseFloat($(tr).find('.price').text())
+                        qty = $(tr).find('.qty');
+                       
+                        var current = parseInt(qty.val());
+                        if ( current > 0 ) {
+                            qty.val(current-1) 
+                            $(tr).find('.total').text(price*parseInt(qty.val()));
+                            
+                        } else {
+                            $(tr).find('.total').text(0);
+                        }
+                        calcuate_total()
+                        calculateFinalItem()
+                    });
         
-          });
-        
-          $('.add').on("click",function() {
-            tr = $(this).closest('tr');
-            price = parseFloat($(tr).find('.price').text());
-            $qty = $(tr).find('.qty');
-            var current = parseInt($qty.val());
-            $qty.val(current+1);
-            $(tr).find('.total').text(price*parseInt($qty.val()))
-            var get_total_after_add = calcuate_total()
-            $("#final-num").html("Rs."+get_total_after_add)
-            
-          });
+                $('.add').on("click",function() {
+                    tr = $(this).closest('tr');
+                    price = parseFloat($(tr).find('.price').text());
+                    let qty = $(tr).find('.qty');
+                    var current = parseInt(qty.val());
+                    qty.val(current+1);
+                    $(tr).find('.total').text(price*parseInt(qty.val()))
+
+                    calcuate_total()
+                    calculateFinalItem()
+
+                });
+
+    
+           
+
+       
 
           // removing item from cart
           $('.remove').click(function(){
-               let del_id = $(this).attr('data-product-id');
+               let del_id = $(this).attr('data-product-id'); //to get the product id of item to be removed
 
-               let quantity_col = $(this).parent().siblings()[2]
-
-               // Get the quantity of the particular row.
-
-               // Get the total price of the particular row.
+               let quantity_col = $(this).parent().siblings() //to get tha quantity div of the item to be removed          
+               
                deleteitem(del_id, this);
+
+               //updating price after deletion of product in cart
+               let totalPrice=$('#final-num')[0].innerText //gets the final total price
+               let totalAmount= quantity_col[4].innerText //gets the unit price of the product that is to be removed
+               totalPrice=totalPrice.replace("Rs.","") //to remove "rs." from amount variable
+               const finalTotalPrice = parseInt(totalPrice)-parseInt(totalAmount) //subtracting total price of removed item from the final total price
+               $('#final-num')[0].innerText = `Rs.${finalTotalPrice}`
+               $("#total-price-cart")[0].innerText = finalTotalPrice
+               
+
+                // calculate quantity after product deletion from cart
+               let quanCol= quantity_col[2]
+               console.log(quanCol)
+               let quantity=$("#total-item-cart")[0].innerText
+               $(quanCol).children().each(function(idx, val){
+                if(val.getAttribute("id")==="qty"){
+                    quantity = parseInt(quantity)- parseInt($(val).val())
+                }
+            })
+            $("#total-item-cart")[0].innerText=quantity
           })
         });  
         

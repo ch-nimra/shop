@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import JsonResponse
 from django.views.decorators.http import require_POST
 from shop.models import Product
-from .cart import Cart
+from .models import Cart, CartItems
 from .forms import CartAddProductForm
 from coupons.forms import CouponApplyForm
 from shop.recommender import Recommender
@@ -19,13 +19,23 @@ class CartAddView(LoginRequiredMixin,View):
     
     def post(self, request, product_id):
 
-        cart = Cart(request)
+        # check if user has cart
+        if not Cart.objects.filter(user=self.request.user).exists():
+            cart= Cart.objects.create(user=self.request.user)
+        else: 
+            cart= Cart.objects.get(user=self.request.user)
         product = get_object_or_404(Product, id=product_id)
         form = CartAddProductForm(request.POST)
-        if request.user.is_authenticated:
-            if form.is_valid():
-                cd = form.cleaned_data
-                cart.add(product=product, quantity=cd['quantity'], override_quantity=cd['override'])
+        if form.is_valid():
+            # check if the product is in cart
+            if not CartItems.objects.filter(product_id=product_id).exists():
+                cartitem= CartItems.objects.create(product_id=product_id, qty=request.POST.get('quantity'), cart=cart)
+            else: 
+                cartitem= CartItems.objects.get(product_id=product_id)
+                cartitem.qty = cartitem.qty + request.POST.get('quantity')
+                cartitem.save()
+
+            cd = form.cleaned_data
         print("here")
         return redirect('cart:cart_detail')
 
@@ -33,7 +43,7 @@ class CartRemoveView(LoginRequiredMixin, View):
     def post(self,request):
         product_id =  self.request.POST.get('del_id')
         # print('jhassvxdghsh')
-        cart = Cart(request)
+        cart = Cart()
         product = get_object_or_404(Product, id=product_id)
         cart.remove(product)
         

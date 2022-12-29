@@ -64,7 +64,7 @@ class ProductListView(View):
             category = get_object_or_404(Category, 
                                         translations__language_code = language,
                                         translations__slug=category_slug)
-            products = products.filter(category=category)
+            product_data_final = product_data_final.filter(category=category)
 
        
 
